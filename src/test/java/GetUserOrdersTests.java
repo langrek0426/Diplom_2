@@ -1,6 +1,7 @@
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,9 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class getUserOrdersTests {
+public class GetUserOrdersTests {
+    String accessToken;
+
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
@@ -30,7 +33,7 @@ public class getUserOrdersTests {
                         .body(user)
                         .when()
                         .post("/api/auth/register");
-        String accessToken = signUpResponse.jsonPath().getString("accessToken");
+        accessToken = signUpResponse.jsonPath().getString("accessToken");
         given()
                 .header("Content-type", "application/json")
                 .auth().oauth2(accessToken)
@@ -77,5 +80,20 @@ public class getUserOrdersTests {
         response.then().assertThat().body("message", is("You should be authorised"))
                 .and()
                 .statusCode(401);
+    }
+
+    @After
+    public void deleteData() {
+        given()
+                .headers(
+                        "Authorization",
+                        accessToken,
+                        "Content-Type",
+                        ContentType.JSON,
+                        "Accept",
+                        ContentType.JSON)
+                .and()
+                .when()
+                .delete("/api/auth/user");
     }
 }
