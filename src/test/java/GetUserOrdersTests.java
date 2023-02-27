@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class GetUserOrdersTests {
-    String accessToken;
+    String accessToken = "";
 
     @Before
     public void setUp() {
@@ -84,16 +84,18 @@ public class GetUserOrdersTests {
 
     @After
     public void deleteData() {
-        given()
-                .headers(
-                        "Authorization",
-                        accessToken,
-                        "Content-Type",
-                        ContentType.JSON,
-                        "Accept",
-                        ContentType.JSON)
-                .and()
-                .when()
-                .delete("/api/auth/user");
+        if (!accessToken.isEmpty()) {
+            given()
+                    .headers(
+                            "Authorization",
+                            accessToken,
+                            "Content-Type",
+                            ContentType.JSON,
+                            "Accept",
+                            ContentType.JSON)
+                    .and()
+                    .when()
+                    .delete("/api/auth/user");
+        }
     }
 }

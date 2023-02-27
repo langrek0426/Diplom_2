@@ -12,7 +12,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 public class MakeOrderTests {
-    String accessToken;
+    String accessToken = "";
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
@@ -100,16 +100,18 @@ public class MakeOrderTests {
     }
     @After
     public void deleteData() {
-        given()
-                .headers(
-                        "Authorization",
-                        accessToken,
-                        "Content-Type",
-                        ContentType.JSON,
-                        "Accept",
-                        ContentType.JSON)
-                .and()
-                .when()
-                .delete("/api/auth/user");
+        if (!accessToken.isEmpty()) {
+            given()
+                    .headers(
+                            "Authorization",
+                            accessToken,
+                            "Content-Type",
+                            ContentType.JSON,
+                            "Accept",
+                            ContentType.JSON)
+                    .and()
+                    .when()
+                    .delete("/api/auth/user");
+        }
     }
 }
